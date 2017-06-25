@@ -2,14 +2,18 @@ package com.castrodev.persistencetalk.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.castrodev.persistencetalk.model.Book;
 import com.castrodev.persistencetalk.model.Loan;
 import com.castrodev.persistencetalk.model.User;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rodrigocastro on 20/06/17.
@@ -76,7 +80,6 @@ public class LoanDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
-            // Simplest implementation is to drop all old tables and recreate them
             db.execSQL("DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + UserEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + LoanEntry.TABLE_NAME);
@@ -135,8 +138,8 @@ public class LoanDbHelper extends SQLiteOpenHelper {
             values.put(LoanEntry._ID, loan.getId());
             values.put(LoanEntry.COLUMN_START_TIME, loan.getStartTime().getTime());
 //            values.put(LoanEntry.COLUMN_END_TIME, loan.getEndTime().getTime());
-            values.put(LoanEntry.COLUMN_BOOK_KEY, loan.getBookId());
-            values.put(LoanEntry.COLUMN_USER_KEY, loan.getUserId());
+            values.put(LoanEntry.COLUMN_BOOK_KEY, loan.getBook().getId());
+            values.put(LoanEntry.COLUMN_USER_KEY, loan.getUser().getId());
 
             db.insertOrThrow(LoanEntry.TABLE_NAME, null, values);
             db.setTransactionSuccessful();
@@ -147,19 +150,67 @@ public class LoanDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    private class BookEntry implements BaseColumns {
+    public List<Loan> getAllLoans() {
+        List<Loan> loans = new ArrayList<>();
+
+        // SELECT * FROM loan LEFT OUTER JOIN user ON loan.user_id = user._id LEFT OUTER JOIN book ON loan.book_id = book._id
+        String POSTS_SELECT_QUERY =
+                String.format("SELECT * FROM %s LEFT OUTER JOIN %s ON %s.%s = %s.%s LEFT OUTER JOIN %s ON %s.%s = %s.%s",
+                        LoanEntry.TABLE_NAME,
+                        UserEntry.TABLE_NAME,
+                        LoanEntry.TABLE_NAME, LoanEntry.COLUMN_USER_KEY,
+                        UserEntry.TABLE_NAME, UserEntry._ID,
+                        BookEntry.TABLE_NAME,
+                        LoanEntry.TABLE_NAME, LoanEntry.COLUMN_BOOK_KEY,
+                        BookEntry.TABLE_NAME, BookEntry._ID);
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(POSTS_SELECT_QUERY, null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    int userId = cursor.getInt(cursor.getColumnIndex(UserEntry._ID));
+                    String name = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_NAME));
+                    String lastname = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_LAST_NAME));
+                    int age = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE));
+                    User user = new User(userId, name, lastname, age);
+
+                    int bookId = cursor.getInt(cursor.getColumnIndex(BookEntry._ID));
+                    String title = cursor.getString(cursor.getColumnIndex(BookEntry.COLUMN_TITLE));
+                    Book book = new Book(bookId, title);
+
+                    int id = cursor.getInt(cursor.getColumnIndex(LoanEntry._ID));
+                    long startTime = cursor.getLong(cursor.getColumnIndex(LoanEntry.COLUMN_START_TIME));
+                    Loan newPost = new Loan(id, new Date(startTime), null, user, book);
+                    loans.add(newPost);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get loans from database");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return loans;
+    }
+
+    private class BookEntry {
         static final String TABLE_NAME = "book";
+        static final String _ID = "book_id";
         static final String COLUMN_TITLE = "title";
     }
 
-    private class UserEntry implements BaseColumns {
+    private class UserEntry {
+        static final String _ID = "user_id";
         static final String TABLE_NAME = "user";
         static final String COLUMN_NAME = "name";
         static final String COLUMN_LAST_NAME = "last_name";
         static final String COLUMN_AGE = "age";
     }
 
-    private class LoanEntry implements BaseColumns {
+    private class LoanEntry {
+        static final String _ID = "loan_id";
         static final String TABLE_NAME = "loan";
         static final String COLUMN_BOOK_KEY = "book_id";
         static final String COLUMN_USER_KEY = "user_id";

@@ -10,15 +10,15 @@ public class Loan {
     private int id;
     private Date startTime;
     private Date endTime;
-    private int bookId;
-    private int userId;
+    private Book book;
+    private User user;
 
     public Loan(int id, Date startTime, Date endTime, User user, Book book) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
-        userId = user.getId();
-        bookId = book.getId();
+        this.user = user;
+        this.book = book;
     }
 
     public int getId() {
@@ -45,19 +45,30 @@ public class Loan {
         this.endTime = endTime;
     }
 
-    public int getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "\n\tid=" + id +
+                "\n\t, startTime=" + startTime +
+                "\n\t, endTime=" + endTime +
+                "\n\t, book=" + book +
+                "\n\t, user=" + user +
+                "\n}";
     }
 }

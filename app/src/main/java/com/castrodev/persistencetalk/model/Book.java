@@ -29,5 +29,11 @@ public class Book {
         this.title = title;
     }
 
-
+    @Override
+    public String toString() {
+        return "Book{" +
+                "\n\t\tid=" + id +
+                "\n\t\t, title='" + title + '\'' +
+                "\n\t}";
+    }
 }
