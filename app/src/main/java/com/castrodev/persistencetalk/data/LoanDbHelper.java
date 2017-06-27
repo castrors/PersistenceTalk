@@ -150,7 +150,7 @@ public class LoanDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<Loan> getAllLoans() {
+    public List<Loan> getAllLoansWithUsersAndBooks() {
         List<Loan> loans = new ArrayList<>();
 
         // SELECT * FROM loan LEFT OUTER JOIN user ON loan.user_id = user._id LEFT OUTER JOIN book ON loan.book_id = book._id

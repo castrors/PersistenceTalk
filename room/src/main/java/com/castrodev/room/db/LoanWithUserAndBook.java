@@ -31,4 +31,15 @@ public class LoanWithUserAndBook {
     public Date startTime;
     @TypeConverters(DateConverter.class)
     public Date endTime;
+
+    @Override
+    public String toString() {
+        return "LoanWithUserAndBook{" +
+                "id='" + id + '\'' +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", userName='" + userName + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
 }

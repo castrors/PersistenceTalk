@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.castrodev.room.db.AppDatabase;
-import com.castrodev.room.db.Loan;
+import com.castrodev.room.db.LoanWithUserAndBook;
 import com.castrodev.room.db.utils.DatabaseInitializer;
 
 import java.util.List;
@@ -50,10 +50,13 @@ public class MainActivity extends AppCompatActivity {
 //                    "%s, %s (%d)\n", youngUser.lastName, youngUser.name, youngUser.age));
 //        }
 
-        List<Loan> allLoans = mDb.loanModel().findAll();
-        for (Loan loan : allLoans) {
+//        List<Loan> allLoans = mDb.loanModel().findAll();
+        List<LoanWithUserAndBook> allLoans = mDb.loanModel().findAllWithUserAndBook();
+        for (LoanWithUserAndBook loan : allLoans) {
             sb.append(loan.toString());
         }
+
+
 
         mYoungUsersTextView.setText(sb);
     }

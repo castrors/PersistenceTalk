@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         loanDbHelper.addLoan(new Loan(50, new Date(), null, user, book));
 
         StringBuilder loansText = new StringBuilder();
-        List<Loan> loans = loanDbHelper.getAllLoans();
+        List<Loan> loans = loanDbHelper.getAllLoansWithUsersAndBooks();
         for (Loan loan : loans) {
             loansText.append(loan.toString());
         }
