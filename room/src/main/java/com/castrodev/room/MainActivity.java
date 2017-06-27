@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.castrodev.room.db.AppDatabase;
 import com.castrodev.room.db.LoanWithUserAndBook;
+import com.castrodev.room.db.User;
 import com.castrodev.room.db.utils.DatabaseInitializer;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             sb.append(loan.toString());
         }
 
+        List<String> users = mDb.userModel().loadAllUserNames();
 
 
         mYoungUsersTextView.setText(sb);

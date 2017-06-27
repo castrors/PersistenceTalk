@@ -27,8 +27,16 @@ import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 
 @Dao
 public interface UserDao {
-    @Query("select * from user")
-    List<User> loadAllUsers();
+    @Query("select name from user")
+    List<String> loadAllUserNames();
+
+    @Query("select age, name from user")
+    List<Pojo> loadAllUsersWithAgeAndNames();
+
+    class Pojo {
+        int age;
+        String name;
+    }
 
     @Query("select * from user where id = :id")
     User loadUserById(int id);

@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
             loansText.append(loan.toString());
         }
 
+        List<User> users = loanDbHelper.getAllUsers();
+
         loansTextView.setText(loansText.toString());
     }
 }

@@ -16,6 +16,7 @@
 
 package com.castrodev.room.db;
 
+import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -26,4 +27,6 @@ public class User {
     public String name;
     public String lastName;
     public int age;
+    @Embedded
+    public Location location;
 }

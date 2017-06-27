@@ -150,6 +150,34 @@ public class LoanDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM user", null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    int userId = cursor.getInt(cursor.getColumnIndex(UserEntry._ID));
+                    String name = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_NAME));
+                    String lastname = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_LAST_NAME));
+                    int age = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE));
+                    User user = new User(userId, name, lastname, age);
+
+                    users.add(user);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get users from database");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return users;
+    }
+
     public List<Loan> getAllLoansWithUsersAndBooks() {
         List<Loan> loans = new ArrayList<>();
 
